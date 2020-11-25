@@ -2,6 +2,6 @@ package com.lind.springloaded;
 
 public class Reload {
     public void load() {
-        System.out.println("load12!");
+        System.out.println("234567");
     }
 }
