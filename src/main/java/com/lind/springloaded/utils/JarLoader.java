@@ -2,14 +2,20 @@ package com.lind.springloaded.utils;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.*;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+
 /**
  * @author wangcanfeng
  * @description jar包加载器
@@ -123,6 +129,55 @@ public class JarLoader {
         URL url = jarPath.toURI().toURL();
         // 把当前jar的路径加入到类加载器需要扫描的路径
         method.invoke(classLoader, url);
+    }
+
+    /**
+     * 读取包
+     *
+     * @param packageUrl
+     * @param clazz      类型
+     * @param name
+     * @param <U>        U的类型和子类型
+     * @return
+     * @throws ClassNotFoundException
+     */
+    public static <U> U findClassLoader(String packageUrl, Class<U> clazz, String name) throws ClassNotFoundException {
+        URL url = null;
+        try {
+            url = new URL(packageUrl);
+            ClassLoader loader = new URLClassLoader(new URL[]{url}) {
+                @Override
+                public Class<?> loadClass(String name) throws ClassNotFoundException {
+                    try {
+                        String fileName = name.substring(name.lastIndexOf(".") + 1) + ".class";
+
+                        InputStream is = getClass().getResourceAsStream(fileName);
+                        if (is == null) {
+                            return super.loadClass(name);
+                        }
+
+                        byte[] b = new byte[is.available()];
+
+                        is.read(b);
+                        return defineClass(name, b, 0, b.length);
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        throw new ClassNotFoundException(name);
+                    }
+                }
+            };
+            return clazz.cast(loader.loadClass(name).newInstance());
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 }
