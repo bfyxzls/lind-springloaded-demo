@@ -1,6 +1,6 @@
 package com.lind.springloaded;
 
-import com.lind.interfaces.Hello;
+import com.lind.hot.deploy.Hello;
 import com.lind.springloaded.utils.JarLoader;
 
 public class AppApplication {

@@ -16,7 +16,7 @@
     <dependencies>
         <dependency>
             <groupId>com.lind</groupId>
-            <artifactId>a-start-hot-interface</artifactId>
+            <artifactId>a-start-hot-deploy</artifactId>
             <version>1.0.0</version>
         </dependency>
     </dependencies>
